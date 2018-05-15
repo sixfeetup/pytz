@@ -521,7 +521,13 @@ def unpickler(zone, utcoffset=None, dstoffset=None, tzname=None):
     """
     # Raises a KeyError if zone no longer exists, which should never happen
     # and would be a bug.
-    tz = pytz.timezone(zone)
+
+    # Try/Except added by Six Feet Up to avoid KeyError for "GMT-4"
+    # timezone values
+    try:
+        tz = pytz.timezone(zone)
+    except:
+        tz = pytz.timezone('America/New_York')
 
     # A StaticTzInfo - just return it
     if utcoffset is None:
