@@ -2,15 +2,8 @@
 #
 
 MAKE=make
-PYTHON24=python2.4
-PYTHON25=python2.5
-PYTHON26=python2.6
-PYTHON27=python2.7
-PYTHON31=python3.1
-PYTHON32=python3.2
-PYTHON33=python3.3
-PYTHON=${PYTHON27}
-PYTHON3=${PYTHON32}
+PYTHON=/usr/bin/python
+PYTHON3=/usr/bin/python3
 OLSON=./elsie.nci.nih.gov
 TESTARGS=-vv
 TARGET=
@@ -29,13 +22,14 @@ dist: build/dist/locales/pytz.pot .stamp-dist
 	cd build/dist && mkdir -p ../tarballs && \
 	${PYTHON} setup.py sdist --dist-dir ../tarballs \
 	    --formats=bztar,gztar,zip && \
-	${PYTHON24} setup.py bdist_egg --dist-dir=../tarballs && \
-	${PYTHON25} setup.py bdist_egg --dist-dir=../tarballs && \
-	${PYTHON26} setup.py bdist_egg --dist-dir=../tarballs && \
-	${PYTHON27} setup.py bdist_egg --dist-dir=../tarballs && \
-	${PYTHON31} setup.py bdist_egg --dist-dir=../tarballs && \
-	${PYTHON32} setup.py bdist_egg --dist-dir=../tarballs
+	${PYTHON} setup.py bdist_egg --dist-dir=../tarballs && \
+	${PYTHON3} setup.py bdist_egg --dist-dir=../tarballs
 	touch $@
+
+wheels:
+	cd build/dist && mkdir -p ../tarballs
+	cd build/dist && ${PYTHON} setup.py -q bdist_wheel --universal --dist-dir=../tarballs
+	cd build/dist && ${PYTHON3} setup.py -q bdist_wheel --universal --dist-dir=../tarballs
 
 upload: dist build/dist/locales/pytz.pot .stamp-upload
 .stamp-upload: .stamp-tzinfo
@@ -43,18 +37,8 @@ upload: dist build/dist/locales/pytz.pot .stamp-upload
 	${PYTHON} setup.py register sdist \
 	    --formats=bztar,gztar,zip --dist-dir=../tarballs \
 	    upload --sign && \
-	${PYTHON24} setup.py register bdist_egg --dist-dir=../tarballs \
+	${PYTHON3} setup.py register bdist_egg --dist-dir=../tarballs \
 	    upload --sign && \
-	${PYTHON25} setup.py register bdist_egg --dist-dir=../tarballs \
-	    upload --sign && \
-	${PYTHON26} setup.py register bdist_egg --dist-dir=../tarballs \
-	    upload --sign && \
-	${PYTHON27} setup.py register bdist_egg --dist-dir=../tarballs \
-	    upload --sign && \
-	${PYTHON32} setup.py register bdist_egg --dist-dir=../tarballs \
-	    upload --sign && \
-	${PYTHON31} setup.py register bdist_egg --dist-dir=../tarballs \
-	    upload --sign
 	touch $@
 
 test: test_tzinfo test_docs test_zdump
@@ -67,23 +51,13 @@ clean:
 
 test_tzinfo: .stamp-tzinfo
 	cd build/dist/pytz/tests \
-	    && ${PYTHON24} test_tzinfo.py ${TESTARGS} \
-	    && ${PYTHON25} test_tzinfo.py ${TESTARGS} \
-	    && ${PYTHON26} test_tzinfo.py ${TESTARGS} \
-	    && ${PYTHON27} test_tzinfo.py ${TESTARGS} \
-	    && ${PYTHON31} test_tzinfo.py ${TESTARGS} \
-	    && ${PYTHON32} test_tzinfo.py ${TESTARGS} \
-	    && ${PYTHON33} test_tzinfo.py ${TESTARGS}
+	    && ${PYTHON} test_tzinfo.py ${TESTARGS} \
+	    && ${PYTHON3} test_tzinfo.py ${TESTARGS}
 
 test_docs: .stamp-tzinfo
 	cd build/dist/pytz/tests \
-	    && ${PYTHON24} test_docs.py ${TESTARGS} \
-	    && ${PYTHON25} test_docs.py ${TESTARGS} \
-	    && ${PYTHON26} test_docs.py ${TESTARGS} \
-	    && ${PYTHON27} test_docs.py ${TESTARGS} \
-	    && ${PYTHON31} test_docs.py ${TESTARGS} \
-	    && ${PYTHON32} test_docs.py ${TESTARGS} \
-	    && ${PYTHON33} test_docs.py ${TESTARGS}
+	    && ${PYTHON} test_docs.py ${TESTARGS} \
+	    && ${PYTHON3} test_docs.py ${TESTARGS}
 
 test_zdump: dist
 	${PYTHON} gen_tests.py ${TARGET} && \
