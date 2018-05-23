@@ -2,13 +2,6 @@
 #
 
 MAKE=make
-PYTHON24=python2.4
-PYTHON25=python2.5
-PYTHON26=python2.6
-PYTHON27=python2.7
-PYTHON31=python3.6
-PYTHON32=python3.6
-PYTHON33=python3.6
 PYTHON=/usr/bin/python
 PYTHON3=/usr/bin/python3
 OLSON=./elsie.nci.nih.gov
